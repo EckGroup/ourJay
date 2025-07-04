@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="firstpage.css">
+    <title>Happy Birthday Joana</title>
+    
+</head>
+<body>
+    <canvas id="fireCanvas"></canvas>
+    
+    <div class="container">
+        <h1>Happy Birthday, Beautiful! 🎉</h1>
+        <p>I lit some fireworks for you. Click anywhere for it😏😏</p>
+        <button class="btn" id="specialMessageBtn" onclick="showSurprise()">Click for a Special Message</button>
+        <button class="btn" id="heartBtn">Shower Me with Hearts</button>
+        <button class="btn" id="heartBtn"><a href="babyj.html" style="color: aliceblue; text-decoration:none; ">Surpriiiiiiiise😉</button></a>
+        <audio id="birthday-music" src="https://www.bensound.com/bensound-music/bensound-happyrock.mp3" loop></audio>
+        <script>
+            function showSurprise() {
+            document.getElementById('specialMessage').style.opacity = 1;
+            document.getElementById('birthday-music').play();
+    }
+        </script>
+        <div class="message-box" id="specialMessage">
+            <h2>To the best person in the whole world...</h2>
+            <p>On your special day, I want you to know how much you mean to me. You light up my world brighter than all these fireworks combined. I'm so grateful to celebrate another year of your amazing life. May this year bring you all the happiness, love, and success you deserve. I love you more than words can express! ❤️</p>
+        </div>
+    </div>
+    
+    <script>
+        // Fire animation
+        const canvas = document.getElementById('fireCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        // Particles for fire effect
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 15 + 5;
+                this.speedX = Math.random() * 3 - 1.5;
+                this.speedY = Math.random() * 3 - 1.5;
+                this.color = `hsl(${Math.random() * 60 + 10}, 100%, 50%)`;
+                this.life = 100;
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.size > 0.2) this.size -= 0.1;
+                this.life--;
+            }
+            
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Glow effect
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = this.color;
+            }
+        }
+        
+        let particles = [];
+        
+        function createFire(x, y) {
+            for (let i = 0; i < 30; i++) {
+                particles.push(new Particle(x, y));
+            }
+        }
+        
+        function handleParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                
+                if (particles[i].life <= 0 || particles[i].size <= 0.2) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+        
+        // Click fireworks
+        document.addEventListener('click', (e) => {
+            createFire(e.clientX, e.clientY);
+            
+            // Create firework effect
+            createFirework(e.clientX, e.clientY);
+        });
+        
+        // Firework effect
+        function createFirework(x, y) {
+            const colors = ['#ff3366', '#ff8a00', '#ffeb3b', '#4caf50', '#2196f3', '#9c27b0'];
+            const particleCount = 100;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 5 + 2;
+                const size = Math.random() * 3 + 1;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                const particle = document.createElement('div');
+                particle.className = 'firework';
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                particle.style.backgroundColor = color;
+                particle.style.boxShadow = `0 0 10px 2px ${color}`;
+                
+                document.body.appendChild(particle);
+                
+                const animation = particle.animate([
+                    { 
+                        transform: `translate(0, 0)`,
+                        opacity: 1
+                    },
+                    { 
+                        transform: `translate(${Math.cos(angle) * speed * 20}px, ${Math.sin(angle) * speed * 20}px)`,
+                        opacity: 0
+                    }
+                ], {
+                    duration: Math.random() * 1000 + 1000,
+                    easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+                });
+                
+                animation.onfinish = () => {
+                    particle.remove();
+                };
+            }
+        }
+        
+        // Animation loop
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.shadowBlur = 0;
+            ctx.shadowColor = 'transparent';
+            
+            handleParticles();
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+        
+        // Special message button
+        document.getElementById('specialMessageBtn').addEventListener('click', () => {
+            const messageBox = document.getElementById('specialMessage');
+            messageBox.style.display = messageBox.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        // Heart button
+        document.getElementById('heartBtn').addEventListener('click', () => {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    createHeart();
+                }, i * 100);
+            }
+        });
+        
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.className = 'heart';
+            heart.style.left = `${Math.random() * window.innerWidth}px`;
+            heart.style.top = `${window.innerHeight}px`;
+            heart.style.fontSize = `${Math.random() * 30 + 20}px`;
+            heart.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+        
+        // Random fireworks occasionally
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                createFirework(
+                    Math.random() * window.innerWidth,
+                    Math.random() * window.innerHeight / 2
+                );
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
